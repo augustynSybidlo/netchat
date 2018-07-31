@@ -31,12 +31,26 @@ public class Server implements Runnable
 
     private void addThread(Socket socket) {
         System.out.println("Client accepted: " + socket);
-        client = new ChatServerThread(this, socket);
+        client = new ServerThread(this, socket);
         try {
             client.open();
             client.start();
         } catch(IOException ioe) {
             System.out.println("Error opening thread: " + ioe); }
+    }
+
+    private void start() {
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.start();
+        }
+    }
+
+    private void stop() {
+        if (thread != null) {
+            thread.stop();
+            thread = null;
+        }
     }
 
 }
