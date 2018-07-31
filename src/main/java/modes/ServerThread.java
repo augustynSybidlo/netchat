@@ -4,34 +4,57 @@ import java.net.*;
 import java.io.*;
 
 public class ServerThread extends Thread {
-    private Socket socket = null;
     private Server server = null;
-    private int id = -1;
-    private DataInputStream streamIn = null;
+    private Socket socket = null;
+    private int ID = -1;
+    private DataInputStream  streamIn  =  null;
+    private DataOutputStream streamOut = null;
 
     ServerThread(Server server, Socket socket) {
+        super();
         this.server = server;
         this.socket = socket;
-        this.id = socket.getPort();
+        this.ID = socket.getPort();
+    }
+
+    public void send(String msg) {
+        try {
+            streamOut.writeUTF(msg);
+            streamOut.flush();
+        } catch(IOException ioe) {
+            System.out.println(ID + " ERROR sending: " + ioe.getMessage());
+            server.remove(ID);
+            stop();
+        }
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public void run() {
-        System.out.println(String.format("Server Thread %s running.", id));
-        while(true) {
+        System.out.println("Server Thread " + ID + " running.");
+        while (true) {
             try {
-                System.out.println(streamIn.readUTF());
+                server.handle(ID, streamIn.readUTF());
             } catch(IOException ioe) {
-                System.out.println(String.format("Exception occured in ServerThread %s", id));
+                System.out.println(ID + " ERROR reading: " + ioe.getMessage());
+                server.remove(ID);
+                stop();
             }
         }
     }
 
     public void open() throws IOException {
-        streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        streamIn = new DataInputStream(new
+            BufferedInputStream(socket.getInputStream()));
+        streamOut = new DataOutputStream(new
+                BufferedOutputStream(socket.getOutputStream()));
     }
 
     public void close() throws IOException {
-        if(socket != null) socket.close();
-        if(streamIn != null) streamIn.close();
+        if (socket != null) socket.close();
+        if (streamIn != null) streamIn.close();
+        if (streamOut != null) streamOut.close();
     }
 }

@@ -54,7 +54,7 @@ public class Client implements Runnable {
         }
     }
 
-    private void stop() {
+    void stop() {
         if (thread != null) {
             thread.stop();
             thread = null;
