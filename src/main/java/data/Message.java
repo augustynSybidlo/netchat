@@ -32,10 +32,6 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "content='" + content + '\'' +
-                ", author='" + author + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
+        return String.format("%s\n%s\n%s", author, content, createdAt.toString());
     }
 }
