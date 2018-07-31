@@ -17,4 +17,17 @@ public class Server implements Runnable
         } catch(IOException ioe) {
             System.out.println(ioe); }
     }
+
+    public void run() {
+        while (thread != null) {
+            try {
+                System.out.println("Waiting for a client ...");
+                addThread(server.accept());
+            } catch(IOException ie) {
+                System.out.println("Acceptance Error: " + ie);
+            }
+        }
+    }
+
+    
 }
