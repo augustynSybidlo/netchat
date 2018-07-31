@@ -29,5 +29,14 @@ public class Server implements Runnable
         }
     }
 
-    
+    private void addThread(Socket socket) {
+        System.out.println("Client accepted: " + socket);
+        client = new ChatServerThread(this, socket);
+        try {
+            client.open();
+            client.start();
+        } catch(IOException ioe) {
+            System.out.println("Error opening thread: " + ioe); }
+    }
+
 }
